@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.iterablechallengekotlin.ui.adapters.WorkoutAdapter
@@ -33,46 +34,23 @@ class HomeFragment : Fragment(), WorkoutAdapter.OnItemClickListener {
         _vm = ViewModelProvider(this)[HomeViewModel::class.java]
         val parent = activity as MainActivity
         parent.supportActionBar?.title = _vm.appTitle.value
-
         return init(view)
     }
     private fun init(view: View): View {
 
         // Find Views
-        _temporaryText = view.findViewById(R.id.temporaryText)
-        _loadButton = view.findViewById(R.id.button1)
-        _clearButton = view.findViewById(R.id.button2)
         _recyclerView = view.findViewById(R.id.recyclerView)
-
-        // Set static text
-        _temporaryText.text= _vm.temporaryText.value
-        _loadButton.text = _vm.loadButton.value
-        _clearButton.text = _vm.clearButton.value
-
-        // Set visibility
-        _temporaryText.visibility = View.VISIBLE
-        _recyclerView.visibility = View.INVISIBLE
-
-        // Set click listener
-        _loadButton.setOnClickListener {
-            _temporaryText.visibility = View.INVISIBLE
-            _recyclerView.visibility = View.VISIBLE
-            _vm.fetchWorkouts()
-            _vm.workouts.observe(viewLifecycleOwner) { workouts ->
-                _adapter.loadData(workouts)
-            }
-
-        }
-        _clearButton.setOnClickListener {
-            _temporaryText.visibility = View.VISIBLE
-            _recyclerView.visibility = View.INVISIBLE
-        }
 
         // Set adapters
         _adapter = WorkoutAdapter(mutableListOf())
         _adapter.setOnItemClickListener(this)
-        _recyclerView.adapter = _adapter
         _recyclerView.layoutManager = LinearLayoutManager(context)
+        _recyclerView.adapter = _adapter
+
+        _vm.fetchWorkouts()
+        _vm.workouts.observe(viewLifecycleOwner) { workouts ->
+            _adapter.loadData(workouts)
+        }
 
         return view
     }
@@ -81,6 +59,9 @@ class HomeFragment : Fragment(), WorkoutAdapter.OnItemClickListener {
         super.onDestroyView()
     }
 
-    override fun onItemClick(article: Workout) {
+    override fun onItemClick(workout: Workout) {
+        val bundle = Bundle()
+        bundle.putParcelable("workout", workout)
+        findNavController().navigate(R.id.navigation_details, bundle)
     }
 }

@@ -36,19 +36,4 @@ class HomeViewModel : ViewModel() {
         value = "Fiterable"
     }
     val appTitle: LiveData<String> = _appTitle
-
-    private val _temporaryText = MutableLiveData<String>().apply {
-        value = "Press the button to load workouts"
-    }
-    val temporaryText: LiveData<String> = _temporaryText
-
-    private val _loadButton = MutableLiveData<String>().apply {
-        value = "Load Workouts"
-    }
-    val loadButton: LiveData<String> = _loadButton
-
-    private val _clearButton = MutableLiveData<String>().apply {
-        value = "Clear Workouts"
-    }
-    val clearButton: LiveData<String> = _clearButton
 }
