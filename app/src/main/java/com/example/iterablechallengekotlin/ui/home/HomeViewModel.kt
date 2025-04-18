@@ -11,7 +11,11 @@ class HomeViewModel : ViewModel() {
     private val _workouts = MutableLiveData<List<Workout>>()
     val workouts: LiveData<List<Workout>> = _workouts
 
-    fun fetchWorkouts() {
+    init {
+        fetchWorkouts()
+    }
+
+    private fun fetchWorkouts() {
 
         viewModelScope.launch {
             try {
@@ -31,7 +35,6 @@ class HomeViewModel : ViewModel() {
     }
 
     // Text
-
     private val _appTitle = MutableLiveData<String>().apply {
         value = "Fiterable"
     }

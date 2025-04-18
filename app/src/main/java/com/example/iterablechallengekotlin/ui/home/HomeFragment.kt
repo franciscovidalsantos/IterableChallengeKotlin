@@ -20,9 +20,6 @@ class HomeFragment : Fragment(), WorkoutAdapter.OnItemClickListener {
     private lateinit var _vm: HomeViewModel
 
     private lateinit var _adapter: WorkoutAdapter
-    private lateinit var _temporaryText: TextView
-    private lateinit var _loadButton: Button
-    private lateinit var _clearButton: Button
     private lateinit var _recyclerView: RecyclerView
 
     override fun onCreateView(
@@ -47,7 +44,6 @@ class HomeFragment : Fragment(), WorkoutAdapter.OnItemClickListener {
         _recyclerView.layoutManager = LinearLayoutManager(context)
         _recyclerView.adapter = _adapter
 
-        _vm.fetchWorkouts()
         _vm.workouts.observe(viewLifecycleOwner) { workouts ->
             _adapter.loadData(workouts)
         }

@@ -17,7 +17,7 @@ data class Workout(
         parcel.readString()?: "",
         parcel.readString()?: "",
         parcel.readString()?: "",
-        parcel.readInt()?: 0,
+        parcel.readInt(),
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",

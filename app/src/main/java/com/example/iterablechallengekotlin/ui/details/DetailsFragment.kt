@@ -23,23 +23,13 @@ import kotlinx.coroutines.launch
 class DetailsFragment : Fragment(){
     private lateinit var _vm: DetailsViewModel
 
-    private lateinit var _titleText: String
-
     private lateinit var _image: ImageView
-    private lateinit var _imageUrlText: String
-
     private lateinit var _description: TextView
-    private lateinit var _descriptionText: String
     private lateinit var _descriptionLabelText: TextView
-
     private lateinit var _instructor: TextView
-    private lateinit var _instructorText: String
     private lateinit var _instructorLabelText: TextView
-
     private lateinit var _category: TextView
-    private lateinit var _categoryText: String
     private lateinit var _categoryLabelText: TextView
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,14 +42,17 @@ class DetailsFragment : Fragment(){
 
         val workout = arguments?.getParcelable<Workout>("workout")
         workout?.let {
-            _titleText = it.title
-            _descriptionText = it.description
-            _categoryText = it.category
-            _instructorText = it.instructor
-            _imageUrlText = it.fullImageUrl
+            _vm.setDetails(
+                title = it.title,
+                description = it.description,
+                category = it.category,
+                instructor = it.instructor,
+                imageUrl = it.fullImageUrl,
+            )
         }
-        parent.supportActionBar?.title = _titleText
-
+        _vm.titleText.observe(viewLifecycleOwner) { title ->
+            parent.supportActionBar?.title = title
+        }
 
         return init(view)
     }
@@ -75,15 +68,26 @@ class DetailsFragment : Fragment(){
         _instructor = view.findViewById(R.id.instructor)
         _instructorLabelText = view.findViewById(R.id.instructor_label)
 
-        _description.text = _descriptionText
-        _descriptionLabelText.text = "Description:"
-        _category.text = _categoryText
-        _categoryLabelText.text = "Category:"
-        _instructor.text = _instructorText
-        _instructorLabelText.text = "Instructor"
+        // Set Text
+        _descriptionLabelText.text = _vm.descriptionLabelText.value
+        _categoryLabelText.text = _vm.categoryLabelText.value
+        _instructorLabelText.text = _vm.instructorLabelText.value
 
+        // Observe LiveData
+        _vm.descriptionText.observe(viewLifecycleOwner) { _description.text = it }
+        _vm.categoryText.observe(viewLifecycleOwner) { _category.text = it }
+        _vm.instructorText.observe(viewLifecycleOwner) { _instructor.text = it }
 
-        Glide.with(view.context).load(_imageUrlText).into(_image)
+        _vm.isImageValid.observe(viewLifecycleOwner){ isValid ->
+            if (isValid) {
+                _vm.imageUrlText.observe(viewLifecycleOwner) { imageUrl ->
+                    Glide.with(view.context).load(imageUrl).into(_image)
+                }
+            } else {
+                // hide image if it is not valid
+                _image.visibility = View.GONE
+            }
+        }
 
         return view
     }
@@ -91,5 +95,4 @@ class DetailsFragment : Fragment(){
     override fun onDestroyView() {
         super.onDestroyView()
     }
-
 }
